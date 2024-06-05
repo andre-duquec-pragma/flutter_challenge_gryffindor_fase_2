@@ -1,6 +1,6 @@
+import '../filter_criteria.dart';
 import '../search_criteria.dart';
 import '../search_criteria_builder.dart';
-import '../search_criteria_priority.dart';
 
 final class SearchCriteriaBuilderImpl implements SearchCriteriaBuilder {
   final String _queryParamInitialOperator = "?";
@@ -10,11 +10,19 @@ final class SearchCriteriaBuilderImpl implements SearchCriteriaBuilder {
   String build({
     required String path,
     Criteria? criteria,
+    Filters? filters,
   }) {
     final searchCriteria = criteria?.toList() ?? [];
-    searchCriteria.sort((item1, item2) => item1.priority.value.compareTo(item2.priority.value));
+    final filterCriteria = filters?.toList() ?? [];
 
     String additionalArguments = "";
+
+    for (FilterCriteria item in filterCriteria) {
+      additionalArguments += _getFilter(
+        filter: item,
+        currentArguments: additionalArguments,
+      );
+    }
 
     for (SearchCriteria item in searchCriteria) {
       additionalArguments += _getCriteria(
@@ -26,18 +34,29 @@ final class SearchCriteriaBuilderImpl implements SearchCriteriaBuilder {
     return "$path$additionalArguments";
   }
 
+  /// Appends a new criteria to current arguments.
+  ///
+  /// [criteria] the search criteria to evaluate.
+  /// [currentArguments] the previous added arguments to append.
   String _getCriteria({
     required SearchCriteria criteria,
     required String currentArguments,
   }) {
-    switch (criteria.priority) {
-      case SearchCriteriaPriority.high:
-        return criteria.get();
-      case SearchCriteriaPriority.low:
-        String operator = currentArguments.contains(_queryParamInitialOperator)
-            ? _queryParamAdditionOperator
-            : _queryParamInitialOperator;
-        return "$operator${criteria.get()}";
-    }
+    String operator = currentArguments.contains(_queryParamInitialOperator)
+        ? _queryParamAdditionOperator
+        : _queryParamInitialOperator;
+
+    return "$operator${criteria.get()}";
+  }
+
+  /// Appends a new filter to current arguments.
+  ///
+  /// [filter] the filter criteria to evaluate.
+  /// [currentArguments] the previous added arguments to append.
+  String _getFilter({
+    required FilterCriteria filter,
+    required String currentArguments,
+  }) {
+    return filter.get();
   }
 }

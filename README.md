@@ -55,10 +55,12 @@ Algunos de los servicios admiten criterios de filtrado. Así que veamos como usa
 
     // Products limit by 2 and desc order
 
-    final productsResponse = await productsRepository.get(
+    final productsResponseByCategories = await productsRepository.get(
       criteria: [
-        const LimitCriteria(limit: 2),
-        const OrderCriteria(order: FilterOrder.desc),
+        const LimitCriteria(limit: 3),
+      ],
+      filters: [
+        const FilterByCategoryCriteria(category: "electronics"),
       ],
     );
 ```

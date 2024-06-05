@@ -1,7 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 import 'base/repository_global_config.dart';
 import 'base/repository_package_builder.dart';
@@ -28,8 +29,6 @@ class RepositoryGlobalConfigImpl implements RepositoryGlobalConfig {
 }
 
 class MainApp extends StatelessWidget {
-  final logger = Logger();
-
   MainApp({super.key}) {
     RepositoryPackageBuilder.start(
       config: RepositoryGlobalConfigImpl(),
@@ -59,10 +58,18 @@ class MainApp extends StatelessWidget {
     await _startAuthRepository();
   }
 
+  log(String data) {
+    print("---------------------------------------------------------------------------------");
+    print(data);
+    print("---------------------------------------------------------------------------------");
+    print("*");
+    print("+");
+  }
+
   Future _startProductsRepository() async {
     ProductsRepository productsRepository = ProductsRepositoryImpl();
 
-    logger.i("Products limit by 2 and desc order");
+    log("Products limit by 2 and desc order");
 
     final productsResponse = await productsRepository.get(
       criteria: [
@@ -72,78 +79,80 @@ class MainApp extends StatelessWidget {
     );
 
     productsResponse.fold((data) {
-      logger.e("Error getting products: ${data.message}");
+      log("Error getting products: ${data.message}");
     }, (data) {
       final representableData = data.map((item) => item.toJson()).reduce((value, element) => "$value \n\n $element");
 
-      logger.i(representableData);
+      log(representableData);
     });
 
-    logger.w("NEW DATA BLOCK");
-    logger.i("Single product with id 1");
+    log("NEW DATA BLOCK");
+    log("Single product with id 1");
 
     final singleProductResponse = await productsRepository.getById(id: 1);
 
     singleProductResponse.fold((data) {
-      logger.e("Error getting product: ${data.message}");
+      log("Error getting product: ${data.message}");
     }, (data) {
-      logger.i(data.toJson());
+      log(data.toJson());
     });
 
-    logger.w("NEW DATA BLOCK");
-    logger.i("Products by categories with limit 3");
+    log("NEW DATA BLOCK");
+    log("Products by categories with limit 3");
 
     final productsResponseByCategories = await productsRepository.get(
       criteria: [
-        const FilterByCategoryCriteria(category: "electronics"),
         const LimitCriteria(limit: 3),
+      ],
+      filters: [
+        const FilterByCategoryCriteria(category: "electronics"),
       ],
     );
 
     productsResponseByCategories.fold((data) {
-      logger.e("Error getting products by category: ${data.toString()}");
+      log("Error getting products by category: ${data.toString()}");
     }, (data) {
       final representableData = data.map((item) => item.toJson()).reduce((value, element) => "$value \n\n $element");
 
-      logger.i(representableData);
+      log(representableData);
     });
   }
 
   Future _startCategoriesRepository() async {
-    logger.w("NEW DATA BLOCK");
-    logger.i("Categories");
+    log("NEW DATA BLOCK");
+    log("Categories");
 
     CategoriesRepository categoriesRepository = CategoriesRepositoryImpl();
 
     final categoriesResponse = await categoriesRepository.get();
 
     categoriesResponse.fold((data) {
-      logger.e("Error getting categories: ${data.message}");
+      log("Error getting categories: ${data.message}");
     }, (data) {
-      logger.i(data.toJson());
+      log(data.toJson());
     });
   }
 
   Future _startUserRepository() async {
-    logger.w("NEW DATA BLOCK");
-    logger.i("Users with limit 2");
+    log("NEW DATA BLOCK");
+    log("Users with limit 2");
 
     UsersRepository usersRepository = UsersRepositoryImpl();
 
     final usersRepositoryResponse = await usersRepository.get(criteria: [const LimitCriteria(limit: 2)]);
 
     usersRepositoryResponse.fold((data) {
-      logger.e("Error getting users: ${data.message}");
+      log("Error getting users: ${data.message}");
     }, (data) {
       final representableData = data.map((item) => item.toJson()).reduce((value, element) => "$value \n\n $element");
 
-      logger.i(representableData);
+      log(representableData);
     });
   }
 
   Future _startAuthRepository() async {
-    logger.w("NEW DATA BLOCK");
-    logger.i("Login");
+    log("NEW DATA BLOCK");
+    log("Login");
 
     AuthRepository authRepository = AuthRepositoryImpl();
     const loginRequest = LoginRequest(
@@ -154,9 +163,9 @@ class MainApp extends StatelessWidget {
     final loginResponse = await authRepository.login(request: loginRequest);
 
     loginResponse.fold((data) {
-      logger.e("Error with login: ${data.message}");
+      log("Error with login: ${data.message}");
     }, (data) {
-      logger.i(data.toJson());
+      log(data.toJson());
     });
   }
 }

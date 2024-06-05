@@ -1,3 +1,4 @@
+/// An enum to represent all available endpoints.
 enum Endpoints {
   products(value: "/products"),
   categories(value: "/products/categories"),

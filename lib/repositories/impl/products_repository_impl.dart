@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../models/responses/product_response.dart';
 import '../../utils/endpoints.dart';
 import '../../utils/exceptions/data_error.dart';
+import '../../utils/search_criteria/filter_criteria.dart';
 import '../../utils/search_criteria/search_criteria.dart';
 import '../base/base_repository.dart';
 import '../products_repository.dart';
@@ -11,6 +12,7 @@ final class ProductsRepositoryImpl extends BaseRepository implements ProductsRep
   @override
   Future<Either<DataError, List<ProductResponse>>> get({
     Criteria? criteria,
+    Filters? filters,
   }) async {
     return await super.getRequest(
       path: Endpoints.products.value,

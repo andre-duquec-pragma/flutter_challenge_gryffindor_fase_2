@@ -1,15 +1,12 @@
 import '../search_criteria.dart';
-import '../search_criteria_priority.dart';
 
+/// A search criteria to define the elements order in api request.
 final class OrderCriteria implements SearchCriteria {
   final FilterOrder order;
 
   const OrderCriteria({
     required this.order,
   });
-
-  @override
-  SearchCriteriaPriority get priority => SearchCriteriaPriority.low;
 
   @override
   String get() => "sort=${order.value}";

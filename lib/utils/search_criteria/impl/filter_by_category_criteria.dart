@@ -1,15 +1,12 @@
-import '../search_criteria.dart';
-import '../search_criteria_priority.dart';
+import '../filter_criteria.dart';
 
-final class FilterByCategoryCriteria implements SearchCriteria {
+/// A criteria to define a category filter in products related requests.
+final class FilterByCategoryCriteria implements FilterCriteria {
   final String category;
 
   const FilterByCategoryCriteria({
     required this.category,
   });
-
-  @override
-  SearchCriteriaPriority get priority => SearchCriteriaPriority.high;
 
   @override
   String get() => "/category/$category";
