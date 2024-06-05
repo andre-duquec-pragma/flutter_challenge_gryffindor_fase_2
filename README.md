@@ -28,3 +28,52 @@ Dentro de la carpeta "utils" se encuentran funcionalidades transversales para el
 El proyecto también usa el patrón "Criteria". Así que dependiendo del repo se pueden filtrar y ordenar los datos de diferente manera.
 
 Dentro de la clase main.dart se encuentra un ejemplo concreto del uso de cada uno de los repositorios creados en el proyecto.
+
+Para comenzar a usar el proyecto es necesario agregar una configuración inicial. Para esto se debe crear una implementación de la clase abstracta 'RepositoryGlobalConfig'. Dentro de esta es necesario que expongamos la url del servicio a consumir.
+
+```dart
+class RepositoryGlobalConfigImpl implements RepositoryGlobalConfig {
+  @override
+  String get baseUrl => "https://fakestoreapi.com";
+}
+```
+
+Luego de tener esto es necesario registrar esta implementación para que pueda ser usada en todo el proyecto.
+
+```dart
+RepositoryPackageBuilder.start(
+  config: RepositoryGlobalConfigImpl(),
+);
+```
+
+Ahora, teniendo esto listo podemos comenzar a usar los repositorios para consumir la api de FakeStore.
+
+Algunos de los servicios admiten criterios de filtrado. Así que veamos como usarlos:
+
+```dart
+    ProductsRepository productsRepository = ProductsRepositoryImpl();
+
+    // Products limit by 2 and desc order
+
+    final productsResponse = await productsRepository.get(
+      criteria: [
+        const LimitCriteria(limit: 2),
+        const OrderCriteria(order: FilterOrder.desc),
+      ],
+    );
+```
+
+Estos criterios no son obligatorios al momento de realizar una petición a la api, sin embargo los podemos combinar de la manera que deseemos para obtener resultados mas ordenados.
+
+El consumo de un servicio sin criterios de busquedad sería el siguiente:
+
+```dart
+AuthRepository authRepository = AuthRepositoryImpl();
+
+const loginRequest = LoginRequest(
+  username: "mor_2314",
+  password: "83r5^_",
+);
+
+final loginResponse = await authRepository.login(request: loginRequest);
+```
